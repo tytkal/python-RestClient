@@ -23,7 +23,7 @@ if you want to use GET :
 ```py
 res.get()
 #if you want to put extrat url to the resourcr
-res,get(append_url='/append')
+res.get(append_url='/append')
 #if you want to use basic auth
 res.username = 'username'
 res.password = 'password'
