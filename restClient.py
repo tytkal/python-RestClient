@@ -1,62 +1,63 @@
+'''
+RestClient is an open source script that depends on requests library 
+it was developed in 2012 and updated in 2014 by @Khalid Al-hussayen 
+the script was used for my owen projects so it is limited to my use any one is welcome to update and fix the script.
+'''
 __author__ = 'khalid'
 import urllib2 , hmac , base64
 from hashlib import sha1
 import hmac , requests
 import json
-from bson import json_util
+'''
+RestClient class is the only class :) it have the four popular http methods (GET,POST,PUT,DELETE) ,
+to use the RestClient you need to declare object from it inilize the host with the base url and resource with your url resource , 
+Then you can call any methods get or post etc.. the http responce will be hold in the reponce object 
+call responce.json() if you want the data parce to json or responce.text for the plain data and res.responce.status_code.
+responce is an requests responce object for more information you can see this url http://docs.python-requests.org/en/latest/user/quickstart/#response-content
+'''
 class RestClient:
     User_Agent = 'ubuntu'
-    host = 'http://127.0.0.1:8080/'
+    host = ''
     Content_Type = 'Aplication/json'
+    resourse = ''
     Date = ''
     headers = {}
     data = []
     status_code = ''
     url = ''
+    text = ''
+    responce = None
+    username = ''
+    password = ''
 
     def put_header(self,key,value):
         self.headers[key]=value
 
-    def resourse(self,append):
-        self.host += append
 
-    def signature(self):
-        stringTosign = self.Content_Length+self.User_Agent+self.host+self.Content_Type+self.Accept_Encoding+self.Date
-        signature = hmac.new(self.secret_token,stringTosign.replace(" ", ""),sha1)
-        signature = base64.b64encode(signature.digest())
-        return signature
+    def get(self,append_url='',params={},is_auth=False):
+	if is_auth:
+        	self.responce = requests.get(self.host+self.resourse+append_url,headers=self.headers,params=params,auth=(self.username,self.password))
+	else:
+        	self.responce = requests.get(self.host+self.resourse+append_url,headers=self.headers,params=params)
 
-    def get(self,resource):
-        resp = requests.get(self.host+resource,headers=self.headers)
-        self.save_data(resp)
+    def post(self,params={},append_url='',is_auth=False):
+	if is_auth:
+        	self.responce = requests.post(self.host+self.resourse+append_url,data=params,headers=self.headers,auth=(self.username,self.password))
+	else:
+        	self.responce = requests.post(self.host+self.resourse+append_url,data=params,headers=self.headers)
 
-    def post(self,data,resource):
-        resp = requests.post(self.host+resource,data=json.dumps(data),headers=self.headers)
-        self.save_data(resp)
 
-    def put(self,data,resource):
-        resp = requests.put(self.host+resource,data=json.dumps(data),headers=self.headers)
-        self.save_data(resp)
+    def put(self,params={},append_url='',is_auth=False):
+	if is_auth:
+        	self.responce = requests.put(self.host+self.resourse+append_url,data=params,headers=self.headers,auth=(self.username,self.password))
+	else:
+        	self.responce = requests.put(self.host+self.resourse+append_url,data=params,headers=self.headers)
 
-    def delete(self,resource,parms=None):
-        resp = requests.delete(self.host+resource,params=parms,headers=self.headers)
-        print resp.url
-        self.save_data(resp)
 
-    def save_data(self,resp):
-        self.data = json.loads(resp.text)
-        self.status_code = resp.status_code
-        self.url = resp.url
 
-#req.add_header('Authorization','General 12331123:'+signature)
-'''req = RestClient()
-body = {'username':'khalid','email':'tytkal@gmail.com','fullname':'khalid abdulrahman alhussayen-','phone':'0506411119'}
+    def delete(self,append_url='',params={},is_auth=False):
+	if is_auth:
+        	self.responce = requests.delete(self.host+self.resourse+append_url,params=params,headers=self.headers,auth=(self.username,self.password))
+	else:
+        	self.responce = requests.delete(self.host+self.resourse+append_url,params=params,headers=self.headers)
 
-req.post(body,'user')
-print req.status_code
-print req.data
-#parms = {'user_id':'525a5d6d562d5727e640b209'}
-#req.delete('user/525a5d6d562d5727e640b209/')
-#res.add_header('Authorization','USER-Auth acssessKey:base64(SHA1(secretkey,stringtosign),Username:base64(SHA1(password,stringtosign)')
-#req.delete('user/tytkal/')
-#print req.status_code'''
